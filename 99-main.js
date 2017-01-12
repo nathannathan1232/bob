@@ -11,9 +11,10 @@ function messageIn(e){
 
 	var msg = e.body.replace(/\./, " ");
 
-	console.log("Message in: " + msg + " ##########");
+	if(!msg.match(/^@/))
+		learnWords(msg);
 
-	learnWords(removeNonWords(msg.split(" ")).reverse()); // Learn words from the message
+	console.log("Message in: " + msg + " ##########");
 
 	if(shouldRespond(msg))
 		return messageOut(msg, e);
@@ -34,7 +35,10 @@ function messageOut(o_msg, e){
 			msg.splice(i, 1); i--;
 		}
 
-	var out = games(o_msg, e) || command(o_msg, e) || genMessage(msg);
+	var out = games(o_msg, e) || command(o_msg, e);
+	if(!out) {
+		out = genMessage(msg);
+	}
 
 	console.log("Message out: " + out);
 
@@ -59,7 +63,7 @@ function justLearn(msg){
 	var msg_words = msg.replace(/\?/, ".");
 	msg_words = msg.split(".");
 	for(var i = 0; i < msg_words.length; i++)
-		learnWords(removeNonWords(msg_words[i].split(" ")).reverse());
+		learnWords(msg_words[i]);
 	console.log("Words learned!");
 }
 
@@ -68,7 +72,7 @@ function justLearn(msg){
 
 // Load word db from file.
 
-db.w = JSON.parse(fs.readFileSync("/home/nathan/Documents/f/db.txt").toString());
+db = JSON.parse(fs.readFileSync("./db.json").toString());
 
 login({email: user_email, password: user_password}, function callback (err, api_o) {
     if(err) return console.error(err);

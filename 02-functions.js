@@ -3,8 +3,19 @@
 */
 
 /*
-	Removes invalid words so it doesn't learn and start using non-words.
+	This function sanitizes every input message so things like case don't matter,
+	and weird things like "------" don't show up in what Bob says.
 */
+
+function sanitizeInput(str) {
+	return removeNonWords(
+			str
+				.toLowerCase()
+				.replace(/  *|\t/g, " ")
+				.replace(/\n/g, " ")
+				.split(" ")
+		).join(" ");
+}
 
 function removeNonWords(words){
 	var invalid_words = [
@@ -28,6 +39,10 @@ function removeUnknownWords(words){
 		}
 	}
 	return words;
+}
+
+function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 function includes(arr, item){
@@ -54,9 +69,7 @@ function compare(a, b){
 }
 
 function swearFilter(str){
-	if(typeof str != String)
-		str = str.toString();
-	return str.replace(/fuck|shit|damn|porn|dick| ass|slut|cunt|bitch|mast.rba|vagina|penis/ig, "****");
+	return str.replace(/fuck|shit|damn|porn|dick|slut|cunt|bitch|mast.rba|vagina|penis/ig, "****");
 }
 
 function coinFlip() {
